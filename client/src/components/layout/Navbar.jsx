@@ -13,7 +13,15 @@ const links = [
   { to: "/daily-quiz", label: "Daily Quiz" },
 ];
 
-const linkCls = ({ isActive }) => `transition-colors hover:text-brand ${isActive ? "text-brand" : "text-ink"}`;
+const initials = (name = "") =>
+  name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase())
+    .join("") || "?";
+
+const linkCls =({ isActive }) => `transition-colors hover:text-brand ${isActive ? "text-brand" : "text-ink"}`;
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -28,9 +36,14 @@ export default function Navbar() {
 
   const account = user ? (
     <>
-      <Button to="/dashboard" variant="secondary" size="sm">
-        Dashboard
-      </Button>
+      <Link
+        to="/dashboard"
+        aria-label={`My dashboard (${user.name})`}
+        title="My dashboard"
+        className="flex size-11 items-center justify-center rounded-full bg-brand-soft text-sm font-extrabold text-brand hover:ring-2 hover:ring-brand/30"
+      >
+        {initials(user.name)}
+      </Link>
       <button
         type="button"
         onClick={handleLogout}

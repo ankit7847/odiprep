@@ -9,6 +9,7 @@ import ExamDetail from "./pages/ExamDetail";
 import TestIntro from "./pages/TestIntro";
 import ExamScreen from "./pages/ExamScreen";
 import Result from "./pages/Result";
+import Dashboard from "./pages/Dashboard";
 import ComingSoon from "./pages/ComingSoon";
 import NotFound from "./pages/NotFound";
 
@@ -51,7 +52,7 @@ export default function App() {
           path="dashboard"
           element={
             <RequireAuth>
-              <ComingSoon title="Your dashboard" />
+              <Dashboard />
             </RequireAuth>
           }
         />

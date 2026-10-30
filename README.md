@@ -59,3 +59,15 @@ cp .env.example .env   # add your Atlas URI
 npm install
 npm run dev
 ```
+
+## Tests
+```
+cd server
+npm test   # runs on an in-memory MongoDB (downloads it on first run)
+```
+
+## Git workflow
+- `main` → live (production) code only
+- `dev` → working branch; features merge here first
+- `feature/<name>` → one branch per feature, e.g. `feature/auth`
+- Merge via Pull Request: feature → dev → main

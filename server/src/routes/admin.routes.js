@@ -43,6 +43,7 @@ router.delete("/questions/:id", question.archive);
 // Tests
 router.get("/tests", test.list);
 router.post("/tests/auto-generate", validate(tv.autoGenerate), test.autoGenerate);
+router.post("/tests/from-batch", validate(tv.fromBatch), test.fromBatch);
 router.post("/tests", validate(tv.createTest), test.create);
 router.get("/tests/:id", test.getOne);
 router.patch("/tests/:id", validate(tv.updateTest), test.update);

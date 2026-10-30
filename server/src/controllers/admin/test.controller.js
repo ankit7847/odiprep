@@ -116,6 +116,53 @@ exports.remove = asyncHandler(async (req, res) => {
   res.json({ success: true, message: "Test deleted" });
 });
 
+// POST /api/admin/tests/from-batch  -> a PYQ paper straight from its Excel upload
+// One section per subject, in the order subjects first appear in the sheet; questions keep sheet order.
+exports.fromBatch = asyncHandler(async (req, res) => {
+  const { uploadBatch, ...meta } = req.body;
+  // insertMany keeps sheet order, and _id order follows insert order
+  const qs = await Question.find({ uploadBatch, status: { $ne: "archived" } })
+    .sort({ _id: 1 })
+    .select("exam subject status")
+    .populate("subject", "name")
+    .lean();
+  if (!qs.length) throw new ApiError(404, "No questions found for this upload");
+  const drafts = qs.filter((q) => q.status !== "published").length;
+  if (drafts) throw new ApiError(400, `${drafts} question(s) in this upload are still drafts. Publish them first.`);
+
+  const examId = meta.exam || String(qs[0].exam);
+  const exam = await Exam.findById(examId).select("marking").lean();
+  if (!exam) throw new ApiError(400, "Exam not found");
+
+  const sections = [];
+  const bySubject = new Map();
+  for (const q of qs) {
+    const key = String(q.subject._id);
+    if (!bySubject.has(key)) {
+      const s = { title: q.subject.name.en, subject: q.subject._id, questions: [] };
+      bySubject.set(key, s);
+      sections.push(s);
+    }
+    bySubject.get(key).questions.push(q._id);
+  }
+
+  const test = new Test({
+    ...meta,
+    exam: examId,
+    slug: meta.slug ? await uniqueSlug(meta.slug) : await uniqueSlug(meta.title),
+    marking: meta.marking || exam.marking,
+    sections,
+    isPublished: false,
+    createdBy: req.user._id,
+  });
+  await test.save();
+  res.status(201).json({
+    success: true,
+    data: test,
+    message: `Draft created: ${test.totalQuestions} questions in ${sections.length} section${sections.length === 1 ? "" : "s"}`,
+  });
+});
+
 // POST /api/admin/tests/auto-generate  -> random published questions per section, saved as a draft test
 exports.autoGenerate = asyncHandler(async (req, res) => {
   const { sections: wanted, source, ...meta } = req.body;

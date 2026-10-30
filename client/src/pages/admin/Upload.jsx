@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Download, FileSpreadsheet, Upload as UploadIcon } from "lucide-react";
 import { api, errorMessage } from "../../lib/api";
 import Button from "../../components/ui/Button";
-import { Notice, PageHeader } from "../../components/admin/ui";
+import { Field, Notice, PageHeader, inputCls } from "../../components/admin/ui";
 
 const steps = [
   "Download the template and fill one question per row.",
@@ -33,6 +33,73 @@ function ErrorTable({ errors }) {
         </tbody>
       </table>
     </div>
+  );
+}
+
+// After publishing an upload: turn it into a draft test in one step (sections = subjects, sheet order kept)
+function MakeTestForm({ uploadBatch }) {
+  const navigate = useNavigate();
+  const [f, setF] = useState({ title: "", type: "pyq", year: "", minutes: "90", correct: "1", negative: "0.33" });
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const set = (k) => (e) => setF((x) => ({ ...x, [k]: e.target.value }));
+
+  const create = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    setError("");
+    try {
+      const r = await api.post("/admin/tests/from-batch", {
+        uploadBatch,
+        title: f.title.trim(),
+        type: f.type,
+        year: f.year ? Number(f.year) : null,
+        durationMinutes: Number(f.minutes),
+        marking: { correct: Number(f.correct), negative: Number(f.negative) },
+      });
+      navigate(`/admin/tests/${r.data.data._id}`, { state: { notice: { tone: "success", text: r.data.message } } });
+    } catch (err) {
+      setError(errorMessage(err));
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form onSubmit={create} className="flex flex-col gap-4 rounded-xl bg-canvas p-4">
+      <div>
+        <h3 className="text-sm font-extrabold text-ink">Make a test from this upload</h3>
+        <p className="text-xs text-muted">One section per subject, questions in the same order as your sheet. Saved as a draft.</p>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+        <Field label="Title" className="sm:col-span-2">
+          <input required minLength={3} value={f.title} onChange={set("title")} placeholder="OSSSC RI · 2025 Paper" className={inputCls} />
+        </Field>
+        <Field label="Type">
+          <select value={f.type} onChange={set("type")} className={inputCls}>
+            <option value="pyq">Previous-year paper</option>
+            <option value="mock">Mock test</option>
+          </select>
+        </Field>
+        <Field label="Year">
+          <input type="number" min="1990" max="2100" value={f.year} onChange={set("year")} className={inputCls} />
+        </Field>
+        <Field label="Minutes">
+          <input required type="number" min="1" max="600" value={f.minutes} onChange={set("minutes")} className={inputCls} />
+        </Field>
+        <div className="grid grid-cols-2 gap-2">
+          <Field label="+ Right">
+            <input required type="number" step="0.25" min="0.25" value={f.correct} onChange={set("correct")} className={inputCls} />
+          </Field>
+          <Field label="− Wrong">
+            <input required type="number" step="0.01" min="0" value={f.negative} onChange={set("negative")} className={inputCls} />
+          </Field>
+        </div>
+      </div>
+      {error && <p className="text-sm text-danger">{error}</p>}
+      <Button type="submit" disabled={busy} className="self-start">
+        {busy ? "Creating…" : "Create test draft"}
+      </Button>
+    </form>
   );
 }
 
@@ -209,13 +276,11 @@ export default function Upload() {
                 </Button>
               </>
             )}
-            {saved.published && (
-              <Button to="/admin/tests/new">Make a test from them</Button>
-            )}
             <Button variant="secondary" onClick={reset}>
               Upload another file
             </Button>
           </div>
+          {saved.published && <MakeTestForm uploadBatch={saved.uploadBatch} />}
         </section>
       )}
 

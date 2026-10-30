@@ -1,4 +1,4 @@
-import { pickText, signed } from "../../lib/format";
+import { pickText, signed, splitPassage } from "../../lib/format";
 
 const badge = {
   correct: { text: "Correct", cls: "bg-success-soft text-success", mark: "text-success" },
@@ -13,6 +13,7 @@ export default function ReviewCard({ q, number, marking, lang }) {
   const b = badge[state];
   const marks = state === "correct" ? marking.correct : state === "wrong" ? -marking.negative : 0;
   const text = pickText(q.text, lang);
+  const { passage, stem } = splitPassage(text.main);
   const chosen = q.options.find((o) => o.key === q.selectedOption);
   const right = q.options.find((o) => o.key === q.correctOption);
   const rightText = right ? pickText(right.text, lang) : null;
@@ -31,8 +32,16 @@ export default function ReviewCard({ q, number, marking, lang }) {
       {tag && <p className="-mt-1 text-[11px] font-bold text-muted uppercase">{tag}</p>}
 
       <div className="flex flex-col gap-1">
-        <h3 lang={text.mainIsOdia ? "or" : "en"} className={`text-ink ${text.mainIsOdia ? "font-odia text-lg font-medium" : "text-[17px] font-bold"}`}>
-          {text.main}
+        {passage && (
+          <details className="mb-2 rounded-xl border border-line bg-canvas px-4 py-2 text-[13px]">
+            <summary className="min-h-9 cursor-pointer py-2 font-semibold text-brand">Show passage</summary>
+            <p lang={text.mainIsOdia ? "or" : "en"} className={`pb-2 leading-relaxed whitespace-pre-line text-ink ${text.mainIsOdia ? "font-odia" : ""}`}>
+              {passage}
+            </p>
+          </details>
+        )}
+        <h3 lang={text.mainIsOdia ? "or" : "en"} className={`whitespace-pre-line text-ink ${text.mainIsOdia ? "font-odia text-lg font-medium" : "text-[17px] font-bold"}`}>
+          {stem}
         </h3>
         {text.alt && (
           <p lang={text.mainIsOdia ? "en" : "or"} className={`text-muted ${text.mainIsOdia ? "text-sm" : "font-odia"}`}>

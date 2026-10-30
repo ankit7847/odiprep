@@ -63,4 +63,13 @@ const autoGenerate = z
 
 const publishSchema = z.object({ isPublished: z.boolean() }).strict();
 
-module.exports = { createTest, updateTest, autoGenerate, publishSchema };
+// Turn one Excel upload into a test: sections by subject, questions in sheet order
+const fromBatch = z
+  .object({
+    ...meta,
+    exam: objectId.optional(), // defaults to the exam of the uploaded questions
+    uploadBatch: z.string().trim().min(1).max(60),
+  })
+  .strict();
+
+module.exports = { createTest, updateTest, autoGenerate, publishSchema, fromBatch };

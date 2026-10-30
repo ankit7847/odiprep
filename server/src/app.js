@@ -18,8 +18,7 @@ app.use("/api/exams", require("./routes/exam.routes"));
 app.use("/api/tests", require("./routes/test.routes"));
 app.use("/api/admin", require("./routes/admin.routes"));
 app.use("/api/attempts", require("./routes/attempt.routes"));
-// Next:
-// app.use("/api/dashboard", require("./routes/dashboard.routes"));
+app.use("/api/dashboard", require("./routes/dashboard.routes"));
 
 app.use(notFound);
 app.use(errorHandler);

@@ -23,10 +23,18 @@ const auth = asyncHandler(async (req, res, next) => {
   next();
 });
 
-// Like auth, but doesn't fail when logged out (public pages that show extra info if logged in)
-const optionalAuth = (req, res, next) => {
-  if (!req.headers.authorization) return next();
-  return auth(req, res, next);
+// Like auth, but never fails: public pages just show less when the token is missing or expired
+const optionalAuth = async (req, res, next) => {
+  const header = req.headers.authorization || "";
+  if (!header.startsWith("Bearer ")) return next();
+  try {
+    const payload = verifyToken(header.slice(7));
+    const user = await User.findById(payload.id);
+    if (user && user.isActive) req.user = user;
+  } catch {
+    /* bad or expired token: treat as logged out */
+  }
+  next();
 };
 
 const isAdmin = (req, res, next) => {

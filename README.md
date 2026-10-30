@@ -57,6 +57,8 @@ User 1─* DailyActivity | TopicStat | Bookmark | Mistake
 cd server
 cp .env.example .env   # add your Atlas URI
 npm install
+npm run seed          # exams, subjects, topics, admin user
+npm run seed:sample   # optional: a 16-question sample mock to try the app
 npm run dev
 ```
 
@@ -71,3 +73,12 @@ npm test   # runs on an in-memory MongoDB (downloads it on first run)
 - `dev` → working branch; features merge here first
 - `feature/<name>` → one branch per feature, e.g. `feature/auth`
 - Merge via Pull Request: feature → dev → main
+
+## Frontend (client)
+```
+cd client
+npm install
+npm run dev      # http://localhost:5173 — /api calls go to the server on :5050
+npm run build    # production build in client/dist
+```
+Production: set `VITE_API_URL` to the deployed API (e.g. `https://odiprep-api.onrender.com/api`).

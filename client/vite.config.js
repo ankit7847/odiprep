@@ -6,6 +6,6 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     // Calls to /api go to the Express server during development
-    proxy: { "/api": "http://localhost:5000" },
+    proxy: { "/api": "http://localhost:5050" },
   },
 });

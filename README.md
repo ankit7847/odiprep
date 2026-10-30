@@ -76,7 +76,7 @@ npm test   # runs on an in-memory MongoDB (downloads it on first run)
 ```
 cd client
 npm install
-npm run dev      # http://localhost:5173 — /api calls go to the server on :5000
+npm run dev      # http://localhost:5173 — /api calls go to the server on :5050
 npm run build    # production build in client/dist
 ```
 Production: set `VITE_API_URL` to the deployed API (e.g. `https://odiprep-api.onrender.com/api`).

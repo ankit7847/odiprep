@@ -1,0 +1,90 @@
+import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { Menu, X } from "lucide-react";
+import Logo from "../ui/Logo";
+import Button from "../ui/Button";
+import LanguageToggle from "../ui/LanguageToggle";
+import { useAuth } from "../../context/AuthContext";
+
+const links = [
+  { to: "/exams", label: "Exams" },
+  { to: "/pyq", label: "PYQ Papers", short: "PYQs" },
+  { to: "/mock-tests", label: "Mock Tests" },
+  { to: "/daily-quiz", label: "Daily Quiz" },
+];
+
+const linkCls = ({ isActive }) => `transition-colors hover:text-brand ${isActive ? "text-brand" : "text-ink"}`;
+
+export default function Navbar() {
+  const { user, logout } = useAuth();
+  const [open, setOpen] = useState(false);
+
+  const account = user ? (
+    <Button to="/dashboard" variant="secondary" size="sm">
+      Dashboard
+    </Button>
+  ) : (
+    <Button to="/login" variant="secondary" size="sm">
+      Login
+    </Button>
+  );
+
+  return (
+    <header className="border-b border-line bg-white">
+      <div className="mx-auto flex h-[76px] max-w-[1440px] items-center justify-between px-5 md:h-[84px] md:px-16">
+        <Logo />
+
+        <nav aria-label="Main" className="hidden gap-[30px] text-sm font-semibold lg:flex">
+          {links.map((l) => (
+            <NavLink key={l.to} to={l.to} className={linkCls}>
+              {l.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-3 md:gap-5">
+          <LanguageToggle className="hidden md:inline-flex" />
+          {account}
+          <button
+            type="button"
+            className="flex size-11 items-center justify-center rounded-xl text-ink md:hidden"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+          >
+            {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Phone and tablet: links in a row under the logo */}
+      <nav aria-label="Main" className="flex justify-between gap-4 overflow-x-auto px-5 pb-3 text-xs font-semibold md:px-16 lg:hidden">
+        {links.map((l) => (
+          <NavLink key={l.to} to={l.to} className={linkCls}>
+            <span className="sm:hidden">{l.short || l.label}</span>
+            <span className="hidden sm:inline">{l.label}</span>
+          </NavLink>
+        ))}
+      </nav>
+
+      {open && (
+        <div className="flex flex-col gap-4 border-t border-line px-5 py-4 md:hidden">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-semibold text-muted">Question language</span>
+            <LanguageToggle />
+          </div>
+          {user && (
+            <button type="button" onClick={logout} className="min-h-11 text-left text-sm font-semibold text-ink">
+              Log out
+            </button>
+          )}
+          {!user && (
+            <Link to="/register" className="min-h-11 text-sm font-semibold text-brand" onClick={() => setOpen(false)}>
+              Create a free account
+            </Link>
+          )}
+        </div>
+      )}
+    </header>
+  );
+}

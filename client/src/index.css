@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+/* Design tokens from the Figma file */
+@theme {
+  --color-brand: #2336c4;
+  --color-brand-dark: #1a2a9c;
+  --color-brand-soft: #eef0ff;
+  --color-ink: #101935;
+  --color-muted: #66708a;
+  --color-line: #e3e6ef;
+  --color-canvas: #f6f7fb;
+  --color-navy-muted: #c9cee1;
+  --color-danger: #b42318;
+  --color-danger-soft: #fef3f2;
+
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-odia: "Anek Odia", "Noto Sans Oriya", sans-serif;
+
+  --shadow-card: 0 4px 20px 0 rgb(16 25 53 / 0.03);
+  --shadow-float: 0 16px 40px 0 rgb(35 54 196 / 0.07);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+    line-height: 1.5;
+  }
+  /* Odia script needs more line height */
+  .font-odia {
+    line-height: 1.7;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+}

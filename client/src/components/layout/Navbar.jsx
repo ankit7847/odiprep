@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { LogOut, Menu, X } from "lucide-react";
 import Logo from "../ui/Logo";
 import Button from "../ui/Button";
 import LanguageToggle from "../ui/LanguageToggle";
@@ -17,12 +17,29 @@ const linkCls = ({ isActive }) => `transition-colors hover:text-brand ${isActive
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
+  const handleLogout = () => {
+    logout();
+    setOpen(false);
+    navigate("/");
+  };
+
   const account = user ? (
-    <Button to="/dashboard" variant="secondary" size="sm">
-      Dashboard
-    </Button>
+    <>
+      <Button to="/dashboard" variant="secondary" size="sm">
+        Dashboard
+      </Button>
+      <button
+        type="button"
+        onClick={handleLogout}
+        className="hidden min-h-11 items-center gap-1.5 rounded-xl px-2 text-xs font-bold text-muted transition-colors hover:text-ink md:flex"
+      >
+        <LogOut className="size-4" aria-hidden="true" />
+        Log out
+      </button>
+    </>
   ) : (
     <Button to="/login" variant="secondary" size="sm">
       Login
@@ -74,7 +91,7 @@ export default function Navbar() {
             <LanguageToggle />
           </div>
           {user && (
-            <button type="button" onClick={logout} className="min-h-11 text-left text-sm font-semibold text-ink">
+            <button type="button" onClick={handleLogout} className="min-h-11 text-left text-sm font-semibold text-ink">
               Log out
             </button>
           )}

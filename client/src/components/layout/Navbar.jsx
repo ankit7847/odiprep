@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { LogOut, Menu, X } from "lucide-react";
+import { LogOut, Menu, Shield, X } from "lucide-react";
 import Logo from "../ui/Logo";
 import Button from "../ui/Button";
 import LanguageToggle from "../ui/LanguageToggle";
@@ -36,6 +36,12 @@ export default function Navbar() {
 
   const account = user ? (
     <>
+      {user.role === "admin" && (
+        <Link to="/admin" className="flex min-h-11 items-center gap-1.5 rounded-xl px-2 text-xs font-bold text-brand hover:underline">
+          <Shield className="size-4" aria-hidden="true" />
+          <span className="hidden sm:inline">Admin</span>
+        </Link>
+      )}
       <Link
         to="/dashboard"
         aria-label={`My dashboard (${user.name})`}

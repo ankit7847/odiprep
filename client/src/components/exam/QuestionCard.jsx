@@ -1,8 +1,9 @@
 import { CheckCircle2, Info } from "lucide-react";
-import { pickText } from "../../lib/format";
+import { pickText, splitPassage } from "../../lib/format";
 
 export default function QuestionCard({ question, index, total, sectionTitle, lang, onSelect, disabled }) {
   const q = pickText(question.text, lang);
+  const { passage, stem } = splitPassage(q.main);
 
   return (
     <div className="flex flex-col gap-7 rounded-2xl border border-line bg-white p-5 shadow-card md:p-8">
@@ -15,8 +16,16 @@ export default function QuestionCard({ question, index, total, sectionTitle, lan
 
       <fieldset className="flex flex-col gap-7" disabled={disabled}>
         <legend className="contents">
-          <span lang={q.mainIsOdia ? "or" : "en"} className={`block text-ink ${q.mainIsOdia ? "font-odia text-[22px] font-medium" : "text-xl font-bold md:text-2xl"}`}>
-            {q.main}
+          {passage && (
+            <span
+              lang={q.mainIsOdia ? "or" : "en"}
+              className={`mb-5 block max-h-[45vh] overflow-y-auto rounded-xl border border-line bg-canvas p-4 text-[15px] leading-relaxed whitespace-pre-line text-ink ${q.mainIsOdia ? "font-odia" : ""}`}
+            >
+              {passage}
+            </span>
+          )}
+          <span lang={q.mainIsOdia ? "or" : "en"} className={`block whitespace-pre-line text-ink ${q.mainIsOdia ? "font-odia text-[22px] font-medium" : "text-xl font-bold md:text-2xl"}`}>
+            {stem}
           </span>
           {q.alt && (
             <span

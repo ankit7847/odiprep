@@ -20,6 +20,10 @@ const subjects = {
   arithmetic: { en: "Arithmetic", od: "ପାଟୀଗଣିତ", topics: ["Percentage", "Ratio", "Time and Work"] },
   english: { en: "English", od: "ଇଂରାଜୀ", topics: ["Grammar", "Vocabulary", "Comprehension"] },
   "current-affairs": { en: "Current Affairs", od: "ସାମ୍ପ୍ରତିକ ଘଟଣା", topics: ["Odisha Schemes", "National"] },
+  // Section names used in OSSSC papers
+  mathematics: { en: "Mathematics", od: "ଗଣିତ", topics: ["Number System", "Profit and Loss", "Mensuration"] },
+  "general-studies": { en: "General Studies", od: "ସାଧାରଣ ଅଧ୍ୟୟନ", topics: ["Indian History", "Indian Polity", "Science"] },
+  odia: { en: "Odia", od: "ଓଡ଼ିଆ", topics: ["Grammar", "Vocabulary", "Translation"] },
 };
 
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");

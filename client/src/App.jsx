@@ -10,6 +10,14 @@ import TestIntro from "./pages/TestIntro";
 import ExamScreen from "./pages/ExamScreen";
 import Result from "./pages/Result";
 import Dashboard from "./pages/Dashboard";
+import RequireAdmin from "./components/layout/RequireAdmin";
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminOverview from "./pages/admin/Overview";
+import AdminQuestions from "./pages/admin/Questions";
+import QuestionForm from "./pages/admin/QuestionForm";
+import AdminUpload from "./pages/admin/Upload";
+import AdminTests from "./pages/admin/Tests";
+import TestEditor from "./pages/admin/TestEditor";
 import ComingSoon from "./pages/ComingSoon";
 import NotFound from "./pages/NotFound";
 
@@ -56,6 +64,24 @@ export default function App() {
             </RequireAuth>
           }
         />
+
+        <Route
+          path="admin"
+          element={
+            <RequireAdmin>
+              <AdminLayout />
+            </RequireAdmin>
+          }
+        >
+          <Route index element={<AdminOverview />} />
+          <Route path="questions" element={<AdminQuestions />} />
+          <Route path="questions/new" element={<QuestionForm key="new" />} />
+          <Route path="questions/:id" element={<QuestionForm key="edit" />} />
+          <Route path="upload" element={<AdminUpload />} />
+          <Route path="tests" element={<AdminTests />} />
+          <Route path="tests/new" element={<TestEditor key="new" />} />
+          <Route path="tests/:id" element={<TestEditor key="edit" />} />
+        </Route>
 
         <Route path="*" element={<NotFound />} />
       </Route>

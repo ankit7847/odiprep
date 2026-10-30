@@ -6,6 +6,9 @@ const { exam, subject, topic } = require("../controllers/admin/catalog.controlle
 const question = require("../controllers/admin/question.controller");
 const qv = require("../validators/question.validator");
 const upload = require("../middlewares/upload");
+const test = require("../controllers/admin/test.controller");
+const tv = require("../validators/test.validator");
+const stats = require("../controllers/admin/stats.controller");
 
 router.use(auth, isAdmin); // everything below is admin-only
 
@@ -37,5 +40,16 @@ router.get("/questions/:id", question.getOne);
 router.patch("/questions/:id", validate(qv.updateQuestion), question.update);
 router.delete("/questions/:id", question.archive);
 
-// Next: tests
+// Tests
+router.get("/tests", test.list);
+router.post("/tests/auto-generate", validate(tv.autoGenerate), test.autoGenerate);
+router.post("/tests", validate(tv.createTest), test.create);
+router.get("/tests/:id", test.getOne);
+router.patch("/tests/:id", validate(tv.updateTest), test.update);
+router.post("/tests/:id/publish", validate(tv.publishSchema), test.publish);
+router.delete("/tests/:id", test.remove);
+
+// Overview numbers
+router.get("/stats", stats.overview);
+
 module.exports = router;

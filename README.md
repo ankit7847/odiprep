@@ -57,6 +57,8 @@ User 1─* DailyActivity | TopicStat | Bookmark | Mistake
 cd server
 cp .env.example .env   # add your Atlas URI
 npm install
+npm run seed          # exams, subjects, topics, admin user
+npm run seed:sample   # optional: a 16-question sample mock to try the app
 npm run dev
 ```
 

@@ -4,22 +4,47 @@ import RequireAuth from "./components/layout/RequireAuth";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Exams from "./pages/Exams";
+import ExamDetail from "./pages/ExamDetail";
+import TestIntro from "./pages/TestIntro";
+import ExamScreen from "./pages/ExamScreen";
+import Result from "./pages/Result";
 import ComingSoon from "./pages/ComingSoon";
 import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
     <Routes>
+      {/* Full-screen exam, no site header/footer */}
+      <Route
+        path="attempt/:id"
+        element={
+          <RequireAuth>
+            <ExamScreen />
+          </RequireAuth>
+        }
+      />
+
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
 
+        <Route path="exams" element={<Exams />} />
+        <Route path="exams/:slug" element={<ExamDetail />} />
+        <Route path="pyq" element={<Exams title="PYQ Papers" subtitle="Pick your exam to see previous-year papers, in order." />} />
+        <Route path="mock-tests" element={<Exams title="Mock Tests" subtitle="Pick your exam to take a full timed mock." />} />
+        <Route path="test/:slug" element={<TestIntro />} />
+        <Route
+          path="attempt/:id/result"
+          element={
+            <RequireAuth>
+              <Result />
+            </RequireAuth>
+          }
+        />
+
         {/* Next pages */}
-        <Route path="exams" element={<ComingSoon title="All exams" />} />
-        <Route path="exams/:slug" element={<ComingSoon title="Exam papers" />} />
-        <Route path="pyq" element={<ComingSoon title="PYQ Papers" />} />
-        <Route path="mock-tests" element={<ComingSoon title="Mock Tests" />} />
         <Route path="daily-quiz" element={<ComingSoon title="Daily Quiz" />} />
         <Route path="forgot-password" element={<ComingSoon title="Reset your password" />} />
         <Route

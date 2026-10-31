@@ -7,7 +7,17 @@ const app = express();
 
 app.set("trust proxy", 1); // behind Render's proxy (needed for rate limiting by IP)
 app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+// CLIENT_URL can list several sites, comma-separated (e.g. the Vercel URL and a custom domain)
+const allowedOrigins = (process.env.CLIENT_URL || "")
+  .split(",")
+  .map((s) => s.trim().replace(/\/$/, ""))
+  .filter(Boolean);
+app.use(
+  cors({
+    origin: (origin, cb) => cb(null, !origin || allowedOrigins.includes(origin)),
+    credentials: true,
+  })
+);
 app.use(express.json({ limit: "1mb" }));
 
 app.get("/api/health", (req, res) => res.json({ success: true, data: { ok: true } }));

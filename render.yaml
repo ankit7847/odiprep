@@ -1,0 +1,30 @@
+# Render blueprint for the API (Dashboard → New → Blueprint → pick this repo)
+services:
+  - type: web
+    name: odiprep-api
+    runtime: node
+    plan: free
+    region: singapore # closest free region to India
+    rootDir: server
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    branch: main
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: JWT_SECRET
+        generateValue: true # Render creates a long random secret
+      - key: MONGO_URI
+        sync: false # you paste this in the Render dashboard
+      - key: CLIENT_URL
+        sync: false # your Vercel URL, e.g. https://odiprep.vercel.app
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

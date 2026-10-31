@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema(
       lastActiveDate: String, // "YYYY-MM-DD" in IST
     },
 
+    resetPasswordToken: { type: String, select: false }, // sha256 hash, never the raw token
+    resetPasswordExpires: { type: Date, select: false },
+
     isActive: { type: Boolean, default: true },
     lastLoginAt: Date,
   },
